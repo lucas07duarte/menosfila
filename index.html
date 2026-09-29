@@ -275,7 +275,6 @@
                 titulo: titulo,
                 status: 'aguardando_caderno'
             }).then(() => {
-                // BUG CORRIGIDO: Agora o campo de Título é limpo também!
                 inputNome.value = '';
                 inputTitulo.value = '';
                 document.getElementById('checkNaoSabeSecao').checked = false;
@@ -366,13 +365,13 @@
                         <div class="flex flex-col md:flex-row justify-between items-center p-4 border-l-4 border-yellow-500 bg-yellow-50 rounded shadow-sm gap-4">
                             <div class="text-center md:text-left w-full">
                                 <p class="text-xl font-bold text-gray-800">${eleitor.nome}</p>
-                                <p class="text-gray-700 font-mono tracking-widest font-semibold mt-1">${formatarTitulo(eleitor.titulo)}</p>
+                                <p class="text-xl md:text-2xl text-gray-900 font-mono tracking-widest font-bold mt-2">${formatarTitulo(eleitor.titulo)}</p>
                             </div>
                             <div class="flex flex-col sm:flex-row w-full md:w-auto gap-2">
-                                <button onclick="rejeitarDaSecao('${eleitor.id}')" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-3 px-4 rounded transition-colors whitespace-nowrap">
+                                <button onclick="rejeitarDaSecao('${eleitor.id}')" class="w-full bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-3 px-4 rounded transition-colors whitespace-nowrap">
                                     Não é daqui ❌
                                 </button>
-                                <button onclick="confirmarNoCaderno('${eleitor.id}')" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-4 rounded transition-colors whitespace-nowrap">
+                                <button onclick="confirmarNoCaderno('${eleitor.id}')" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-4 rounded transition-colors whitespace-nowrap">
                                     Achei ✔
                                 </button>
                             </div>
@@ -381,14 +380,16 @@
                 if (eleitor.status === 'aguardando_urna') {
                     qtdUrna++;
                     listaUrna.innerHTML += `
-                        <div class="flex justify-between items-center p-4 border-l-4 border-green-500 bg-green-50 rounded shadow-sm">
-                            <div>
+                        <div class="flex flex-col md:flex-row justify-between items-center p-4 border-l-4 border-green-500 bg-green-50 rounded shadow-sm gap-4">
+                            <div class="text-center md:text-left w-full">
                                 <p class="text-xl font-bold text-gray-800">${eleitor.nome}</p>
-                                <p class="text-gray-700 font-mono tracking-widest font-semibold mt-1">${formatarTitulo(eleitor.titulo)}</p>
+                                <p class="text-xl md:text-2xl text-gray-900 font-mono tracking-widest font-bold mt-2">${formatarTitulo(eleitor.titulo)}</p>
                             </div>
-                            <button onclick="confirmarVotoEApagar('${eleitor.id}')" class="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-6 rounded shadow flex items-center">
-                                Votou (Apagar ✖)
-                            </button>
+                            <div class="flex flex-col sm:flex-row w-full md:w-auto gap-2">
+                                <button onclick="confirmarVotoEApagar('${eleitor.id}')" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-6 rounded shadow flex justify-center items-center">
+                                    Votou (Apagar ✖)
+                                </button>
+                            </div>
                         </div>`;
                 }
             });
@@ -400,14 +401,14 @@
                         <div class="flex flex-col md:flex-row justify-between items-center p-4 border-l-4 border-red-500 bg-red-50 rounded shadow-sm gap-4">
                             <div class="text-center md:text-left w-full">
                                 <p class="text-xl font-bold text-gray-800">${eleitor.nome}</p>
-                                <p class="text-gray-700 font-mono tracking-widest font-semibold mt-1">${formatarTitulo(eleitor.titulo)}</p>
-                                ${eleitor.origem_rejeicao ? `<p class="text-xs text-red-600 mt-1">Rejeitado pela seção ${eleitor.origem_rejeicao}</p>` : ''}
+                                <p class="text-xl md:text-2xl text-gray-900 font-mono tracking-widest font-bold mt-2">${formatarTitulo(eleitor.titulo)}</p>
+                                ${eleitor.origem_rejeicao ? `<p class="text-sm font-bold text-red-600 mt-2">Rejeitado pela Seção ${eleitor.origem_rejeicao}</p>` : ''}
                             </div>
                             <div class="flex flex-col sm:flex-row w-full md:w-auto gap-2">
-                                <button onclick="negarDaBuscaGeral('${eleitor.id}')" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-3 px-4 rounded transition-colors whitespace-nowrap">
+                                <button onclick="negarDaBuscaGeral('${eleitor.id}')" class="w-full bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-3 px-4 rounded transition-colors whitespace-nowrap">
                                     Também não é daqui ❌
                                 </button>
-                                <button onclick="aceitarDaBuscaGeral('${eleitor.id}')" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded transition-colors whitespace-nowrap">
+                                <button onclick="aceitarDaBuscaGeral('${eleitor.id}')" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded transition-colors whitespace-nowrap">
                                     Achei, puxar pra cá ✔
                                 </button>
                             </div>
