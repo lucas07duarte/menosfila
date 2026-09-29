@@ -246,12 +246,18 @@
         function rejeitarDaSecao(id) {
             const eleitor = filaEleitores.find(e => e.id === id);
             if(eleitor) {
+                // Remove da seção atual
                 db.ref('filas/' + filaAtual + '/' + id).remove();
+                
+                // Envia para a busca global marcando que a seção atual já negou ele
                 db.ref('fila_geral').push({
                     nome: eleitor.nome,
                     titulo: eleitor.titulo,
                     status: 'aguardando_caderno',
-                    origem_rejeicao: filaAtual
+                    origem_rejeicao: filaAtual,
+                    negado_por: {
+                        [filaAtual]: true // O Firebase já cria ele com o status "negado" pela sua seção
+                    }
                 });
             }
         }
@@ -344,7 +350,8 @@
             });
 
             filaRejeitados.forEach(eleitor => {
-                if (!eleitor.negado_por || !eleitor.negado_por[filaAtual]) {
+                // CORREÇÃO: Não exibe se a origem da rejeição foi a própria seção, ou se ela já negou na busca
+                if (eleitor.origem_rejeicao !== filaAtual && (!eleitor.negado_por || !eleitor.negado_por[filaAtual])) {
                     rejeitadosVisiveis++;
                     listaRejeitados.innerHTML += `
                         <div class="flex flex-col md:flex-row justify-between items-center p-4 border-l-4 border-red-500 bg-red-50 rounded shadow-sm gap-4">
