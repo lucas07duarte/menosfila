@@ -4,9 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Votação - Fila Rápida</title>
+    
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Bibliotecas do Firebase (Versão 8 para facilitar o uso em arquivo único) -->
+    <!-- Bibliotecas do Firebase (Versão 8) -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
@@ -17,6 +19,7 @@
 </head>
 <body class="bg-gray-100 min-h-screen font-sans">
 
+    <!-- Cabeçalho -->
     <header class="bg-blue-800 text-white shadow-md">
         <div class="max-w-3xl mx-auto p-4 text-center">
             <h1 class="text-2xl font-bold mb-4">Controle de Fluxo - Eleição</h1>
@@ -65,22 +68,21 @@
     </main>
 
     <script>
-        // --- 1. CONFIGURAÇÃO DO FIREBASE (Colaremos suas chaves aqui depois) ---
+        // --- 1. CONFIGURAÇÃO DO FIREBASE ---
         const firebaseConfig = {
-            apiKey: "COLE_AQUI",
-            authDomain: "COLE_AQUI",
-            databaseURL: "COLE_AQUI",
-            projectId: "COLE_AQUI",
-            storageBucket: "COLE_AQUI",
-            messagingSenderId: "COLE_AQUI",
-            appId: "COLE_AQUI"
+            apiKey: "AIzaSyB5kvwAoUxUtARIcVlDIiSFe4SEwrn1EwY",
+            authDomain: "menosfila-1eda8.firebaseapp.com",
+            databaseURL: "https://menosfila-1eda8-default-rtdb.firebaseio.com",
+            projectId: "menosfila-1eda8",
+            storageBucket: "menosfila-1eda8.firebasestorage.app",
+            messagingSenderId: "690115054438",
+            appId: "1:690115054438:web:963ff200494fc8666c16a7",
+            measurementId: "G-68EB12WPEV"
         };
         
-        // Inicializa o Firebase se tiver configuração válida
-        if(firebaseConfig.apiKey !== "COLE_AQUI") {
-            firebase.initializeApp(firebaseConfig);
-        }
-        const db = typeof firebase !== 'undefined' && firebase.apps.length > 0 ? firebase.database() : null;
+        // Inicializa o Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
         let filaEleitores = [];
 
         // --- 2. NAVEGAÇÃO DAS ABAS ---
@@ -96,6 +98,7 @@
             btn.classList.add('bg-white', 'text-blue-800');
         }
 
+        // Formata o título de 4 em 4 dígitos
         function formatarTitulo(titulo) {
             if (!titulo || titulo.length !== 12) return titulo;
             return titulo.substring(0, 4) + ' ' + titulo.substring(4, 8) + ' ' + titulo.substring(8, 12);
@@ -103,7 +106,6 @@
 
         // --- 3. REGRAS DE NEGÓCIO (Sincronizadas com Banco) ---
         function adicionarFila() {
-            if(!db) return alert("Firebase não configurado!");
             const inputNome = document.getElementById('inputNome');
             const inputTitulo = document.getElementById('inputTitulo');
             const nome = inputNome.value.trim().toUpperCase();
@@ -137,28 +139,31 @@
             }
         }
 
-        // --- 4. ESCUTADOR EM TEMPO REAL (Onde a mágica acontece) ---
-        if(db) {
-            db.ref('fila').on('value', (snapshot) => {
-                filaEleitores = [];
-                snapshot.forEach((child) => {
-                    filaEleitores.push({
-                        id: child.key, // Chave única gerada pelo Firebase
-                        ...child.val()
-                    });
+        // --- 4. ESCUTADOR EM TEMPO REAL (Atualiza as telas sozinho) ---
+        db.ref('fila').on('value', (snapshot) => {
+            filaEleitores = [];
+            snapshot.forEach((child) => {
+                filaEleitores.push({
+                    id: child.key, 
+                    ...child.val()
                 });
-                renderizarListas();
             });
-        }
+            renderizarListas();
+        });
 
         // --- 5. RENDERIZAÇÃO NA TELA ---
         function renderizarListas() {
             const listaCaderno = document.getElementById('listaCaderno');
             const listaUrna = document.getElementById('listaUrna');
-            listaCaderno.innerHTML = ''; listaUrna.innerHTML = '';
-            let cadernoVazio = true; let urnaVazia = true;
+            
+            listaCaderno.innerHTML = ''; 
+            listaUrna.innerHTML = '';
+            
+            let cadernoVazio = true; 
+            let urnaVazia = true;
 
             filaEleitores.forEach(eleitor => {
+                // ABA 2: CADERNO
                 if (eleitor.status === 'aguardando_caderno') {
                     cadernoVazio = false;
                     listaCaderno.innerHTML += `
@@ -172,6 +177,8 @@
                             </button>
                         </div>`;
                 }
+                
+                // ABA 3: URNA
                 if (eleitor.status === 'aguardando_urna') {
                     urnaVazia = false;
                     listaUrna.innerHTML += `
@@ -187,8 +194,8 @@
                 }
             });
 
-            if (cadernoVazio) listaCaderno.innerHTML = '<p class="text-gray-500 text-center py-8">Ninguém aguardando.</p>';
-            if (urnaVazia) listaUrna.innerHTML = '<p class="text-gray-500 text-center py-8">Ninguém aguardando.</p>';
+            if (cadernoVazio) listaCaderno.innerHTML = '<p class="text-gray-500 text-center py-8">Ninguém aguardando no momento.</p>';
+            if (urnaVazia) listaUrna.innerHTML = '<p class="text-gray-500 text-center py-8">Ninguém aguardando na urna.</p>';
         }
     </script>
 </body>
