@@ -19,7 +19,23 @@
 
     <header class="bg-blue-800 text-white shadow-md">
         <div class="max-w-3xl mx-auto p-4 text-center">
-            <h1 class="text-2xl font-bold mb-4">Controle de Fluxo - Eleição</h1>
+            
+            <div class="flex flex-col md:flex-row justify-between items-center mb-4">
+                <h1 class="text-2xl font-bold">Controle de Fluxo</h1>
+                
+                <!-- NOVO: SELETOR DE FILA / SEÇÃO -->
+                <div class="mt-2 md:mt-0 bg-blue-900 p-2 rounded-lg flex items-center shadow-inner">
+                    <label class="font-semibold mr-3 text-blue-200">Seção/Fila:</label>
+                    <select id="selectFila" onchange="mudarFila()" class="text-gray-900 font-bold p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer">
+                        <option value="74">Seção 74</option>
+                        <option value="75">Seção 75</option>
+                        <option value="76">Seção 76</option>
+                        <option value="77">Seção 77</option>
+                        <option value="78">Seção 78</option>
+                    </select>
+                </div>
+            </div>
+
             <div class="flex justify-between space-x-2 bg-blue-900 p-1 rounded-lg">
                 <button onclick="switchTab('aba1')" id="btn-aba1" class="flex-1 py-3 text-lg font-semibold rounded-md bg-white text-blue-800 transition-colors">1. Fila</button>
                 <button onclick="switchTab('aba2')" id="btn-aba2" class="flex-1 py-3 text-lg font-semibold rounded-md text-white hover:bg-blue-700 transition-colors">2. Caderno</button>
@@ -31,7 +47,10 @@
     <main class="max-w-3xl mx-auto p-4 mt-4">
         <!-- ABA 1: INSERÇÃO -->
         <section id="aba1" class="tab-content active bg-white p-6 rounded-xl shadow-md">
-            <h2 class="text-xl font-bold text-gray-800 mb-6 border-b pb-2">Entrada de Eleitor</h2>
+            <h2 class="text-xl font-bold text-gray-800 mb-6 border-b pb-2 flex justify-between">
+                <span>Entrada de Eleitor</span>
+                <span id="labelFilaAtualAba1" class="text-blue-600 bg-blue-100 px-3 py-1 rounded-full text-sm">Seção 74</span>
+            </h2>
             <div class="space-y-4">
                 <div>
                     <label class="block text-gray-700 font-semibold mb-2">Nome Completo</label>
@@ -47,7 +66,6 @@
                            class="w-full p-4 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors">
                 </div>
 
-                <!-- CAIXINHA DE SELEÇÃO ATUALIZADA -->
                 <div class="flex items-center mt-2 p-2 bg-gray-50 rounded border border-gray-200">
                     <input type="checkbox" id="checkSemTitulo" onchange="alternarCampoTitulo()" class="w-6 h-6 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
                     <label for="checkSemTitulo" class="ml-3 text-gray-700 font-medium cursor-pointer">
@@ -63,13 +81,19 @@
 
         <!-- ABA 2: CADERNO -->
         <section id="aba2" class="tab-content bg-white p-6 rounded-xl shadow-md">
-            <h2 class="text-xl font-bold text-gray-800 mb-6 border-b pb-2">Procurar no Caderno Físico</h2>
+            <h2 class="text-xl font-bold text-gray-800 mb-6 border-b pb-2 flex justify-between">
+                <span>Procurar no Caderno</span>
+                <span id="labelFilaAtualAba2" class="text-yellow-600 bg-yellow-100 px-3 py-1 rounded-full text-sm">Seção 74</span>
+            </h2>
             <div id="listaCaderno" class="space-y-4"></div>
         </section>
 
         <!-- ABA 3: URNA (EXPURGO) -->
         <section id="aba3" class="tab-content bg-white p-6 rounded-xl shadow-md">
-            <h2 class="text-xl font-bold text-gray-800 mb-6 border-b pb-2">Liberar Urna (Expurgo)</h2>
+            <h2 class="text-xl font-bold text-gray-800 mb-6 border-b pb-2 flex justify-between">
+                <span>Liberar Urna (Expurgo)</span>
+                <span id="labelFilaAtualAba3" class="text-green-600 bg-green-100 px-3 py-1 rounded-full text-sm">Seção 74</span>
+            </h2>
             <div id="listaUrna" class="space-y-4"></div>
         </section>
     </main>
@@ -87,12 +111,33 @@
             measurementId: "G-68EB12WPEV"
         };
         
-        // Inicializa o Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
+        
+        // VARIÁVEIS DE CONTROLE DE FILA
         let filaEleitores = [];
+        let filaAtual = document.getElementById('selectFila').value; // Pega o valor inicial (74)
 
-        // --- 2. NAVEGAÇÃO E INTERFACE ---
+        // --- 2. LÓGICA DE MÚLTIPLAS FILAS ---
+        function mudarFila() {
+            // 1. Desconecta do banco de dados da fila anterior para não misturar
+            db.ref('filas/' + filaAtual).off(); 
+            
+            // 2. Atualiza a variável com a nova fila escolhida
+            filaAtual = document.getElementById('selectFila').value;
+            
+            // 3. Atualiza os rótulos visuais na tela para o usuário ter certeza de onde está
+            document.getElementById('labelFilaAtualAba1').innerText = "Seção " + filaAtual;
+            document.getElementById('labelFilaAtualAba2').innerText = "Seção " + filaAtual;
+            document.getElementById('labelFilaAtualAba3').innerText = "Seção " + filaAtual;
+            
+            // 4. Limpa a tela e começa a escutar a nova fila
+            filaEleitores = [];
+            renderizarListas();
+            escutarFilaFirebase();
+        }
+
+        // --- 3. NAVEGAÇÃO E INTERFACE ---
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('header button').forEach(btn => {
@@ -105,14 +150,13 @@
             btn.classList.add('bg-white', 'text-blue-800');
         }
 
-        // Bloqueia ou desbloqueia o campo do título
         function alternarCampoTitulo() {
             const check = document.getElementById('checkSemTitulo').checked;
             const inputTitulo = document.getElementById('inputTitulo');
             
             if (check) {
                 inputTitulo.disabled = true;
-                inputTitulo.value = ''; // Limpa o que foi digitado
+                inputTitulo.value = '';
                 inputTitulo.classList.add('bg-gray-200', 'cursor-not-allowed');
                 inputTitulo.placeholder = "Dispensado";
             } else {
@@ -122,7 +166,6 @@
             }
         }
 
-        // Formatação visual para a lista
         function formatarTitulo(titulo) {
             if (titulo === "SEM_TITULO") {
                 return "📄 SEM TÍTULO"; 
@@ -131,7 +174,7 @@
             return titulo.substring(0, 4) + ' ' + titulo.substring(4, 8) + ' ' + titulo.substring(8, 12);
         }
 
-        // --- 3. REGRAS DE NEGÓCIO (Sincronizadas com Banco) ---
+        // --- 4. REGRAS DE NEGÓCIO (Usando a fila atual) ---
         function adicionarFila() {
             const inputNome = document.getElementById('inputNome');
             const inputTitulo = document.getElementById('inputTitulo');
@@ -140,20 +183,16 @@
             const nome = inputNome.value.trim().toUpperCase();
             let titulo = inputTitulo.value.trim();
 
-            if (nome === '') {
-                return alert("Preencha o Nome do eleitor.");
-            }
+            if (nome === '') return alert("Preencha o Nome do eleitor.");
 
             if (semTitulo) {
                 titulo = "SEM_TITULO"; 
             } else {
-                if (titulo.length !== 12) {
-                    return alert("Preencha os 12 dígitos do Título, ou marque a opção 'Sem título de eleitor'.");
-                }
+                if (titulo.length !== 12) return alert("Preencha os 12 dígitos do Título, ou marque a opção 'Sem título de eleitor'.");
             }
 
-            // Envia para o banco de dados
-            db.ref('fila').push({
+            // ATENÇÃO: Agora salva dentro da pasta específica da filaAtual (ex: /filas/74)
+            db.ref('filas/' + filaAtual).push({
                 nome: nome,
                 titulo: titulo,
                 status: 'aguardando_caderno'
@@ -172,33 +211,40 @@
         }
 
         function confirmarNoCaderno(id) {
-            db.ref('fila/' + id).update({ status: 'aguardando_urna' }).catch(erro => alert("Erro ao atualizar: " + erro.message));
+            db.ref('filas/' + filaAtual + '/' + id).update({ status: 'aguardando_urna' }).catch(erro => alert("Erro ao atualizar: " + erro.message));
         }
 
         function confirmarVotoEApagar(id) {
             if(confirm("Confirmar voto? O dado será DELETADO permanentemente.")){
-                db.ref('fila/' + id).remove().catch(erro => alert("Erro ao deletar: " + erro.message));
+                db.ref('filas/' + filaAtual + '/' + id).remove().catch(erro => alert("Erro ao deletar: " + erro.message));
             }
         }
 
-        // --- 4. ESCUTADOR EM TEMPO REAL ---
-        db.ref('fila').on('value', (snapshot) => {
-            filaEleitores = [];
-            snapshot.forEach((child) => {
-                filaEleitores.push({
-                    id: child.key,
-                    ...child.val()
+        // --- 5. ESCUTADOR EM TEMPO REAL (Reutilizável) ---
+        function escutarFilaFirebase() {
+            db.ref('filas/' + filaAtual).on('value', (snapshot) => {
+                filaEleitores = [];
+                snapshot.forEach((child) => {
+                    filaEleitores.push({
+                        id: child.key,
+                        ...child.val()
+                    });
                 });
+                renderizarListas();
+            }, (error) => {
+                console.error("Erro ao ler dados: ", error);
+                if (filaEleitores.length === 0) {
+                    document.getElementById('listaCaderno').innerHTML = '<p class="text-red-500 font-bold text-center py-8">Erro de Permissão no Firebase!</p>';
+                }
             });
-            renderizarListas();
-        }, (error) => {
-            console.error("Erro ao ler dados: ", error);
-            if (filaEleitores.length === 0) {
-                document.getElementById('listaCaderno').innerHTML = '<p class="text-red-500 font-bold text-center py-8">Erro de Permissão no Firebase! Vá na aba Regras e coloque como true.</p>';
-            }
-        });
+        }
 
-        // --- 5. RENDERIZAÇÃO NA TELA ---
+        // Inicia a escuta da fila padrão ao carregar a página
+        window.onload = () => {
+            escutarFilaFirebase();
+        };
+
+        // --- 6. RENDERIZAÇÃO NA TELA ---
         function renderizarListas() {
             const listaCaderno = document.getElementById('listaCaderno');
             const listaUrna = document.getElementById('listaUrna');
@@ -234,8 +280,8 @@
                 }
             });
 
-            if (cadernoVazio) listaCaderno.innerHTML = '<p class="text-gray-500 text-center py-8">Ninguém aguardando.</p>';
-            if (urnaVazia) listaUrna.innerHTML = '<p class="text-gray-500 text-center py-8">Ninguém aguardando.</p>';
+            if (cadernoVazio) listaCaderno.innerHTML = '<p class="text-gray-500 text-center py-8">Ninguém aguardando na Seção ' + filaAtual + '.</p>';
+            if (urnaVazia) listaUrna.innerHTML = '<p class="text-gray-500 text-center py-8">Ninguém aguardando na Seção ' + filaAtual + '.</p>';
         }
     </script>
 </body>
