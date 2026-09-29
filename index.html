@@ -47,11 +47,11 @@
                            class="w-full p-4 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors">
                 </div>
 
-                <!-- NOVA CAIXINHA DE SELEÇÃO -->
+                <!-- CAIXINHA DE SELEÇÃO ATUALIZADA -->
                 <div class="flex items-center mt-2 p-2 bg-gray-50 rounded border border-gray-200">
                     <input type="checkbox" id="checkSemTitulo" onchange="alternarCampoTitulo()" class="w-6 h-6 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
                     <label for="checkSemTitulo" class="ml-3 text-gray-700 font-medium cursor-pointer">
-                        Votará com outro documento (RG/CNH/CPF)
+                        Sem título de eleitor
                     </label>
                 </div>
 
@@ -105,7 +105,7 @@
             btn.classList.add('bg-white', 'text-blue-800');
         }
 
-        // Função nova para bloquear/desbloquear o campo do título
+        // Bloqueia ou desbloqueia o campo do título
         function alternarCampoTitulo() {
             const check = document.getElementById('checkSemTitulo').checked;
             const inputTitulo = document.getElementById('inputTitulo');
@@ -122,10 +122,10 @@
             }
         }
 
-        // Nova lógica de formatação visual para a lista
+        // Formatação visual para a lista
         function formatarTitulo(titulo) {
             if (titulo === "SEM_TITULO") {
-                return "📄 OUTRO DOCUMENTO"; // Destaca visualmente que é RG/CPF
+                return "📄 SEM TÍTULO"; 
             }
             if (!titulo || titulo.length !== 12) return titulo;
             return titulo.substring(0, 4) + ' ' + titulo.substring(4, 8) + ' ' + titulo.substring(8, 12);
@@ -144,33 +144,30 @@
                 return alert("Preencha o Nome do eleitor.");
             }
 
-            // Validação inteligente
             if (semTitulo) {
-                titulo = "SEM_TITULO"; // Salva esse código interno
+                titulo = "SEM_TITULO"; 
             } else {
                 if (titulo.length !== 12) {
-                    return alert("Preencha os 12 dígitos do Título, ou marque a opção 'Votará com outro documento'.");
+                    return alert("Preencha os 12 dígitos do Título, ou marque a opção 'Sem título de eleitor'.");
                 }
             }
 
-            // Tenta enviar para o banco de dados
+            // Envia para o banco de dados
             db.ref('fila').push({
                 nome: nome,
                 titulo: titulo,
                 status: 'aguardando_caderno'
             }).then(() => {
-                // Limpa o formulário após salvar com sucesso
                 inputNome.value = '';
                 if (!semTitulo) {
                     inputTitulo.value = '';
                 } else {
-                    // Se estava marcado, desmarca para o próximo eleitor
                     document.getElementById('checkSemTitulo').checked = false;
                     alternarCampoTitulo();
                 }
                 inputNome.focus();
             }).catch((error) => {
-                alert("ERRO DE COMUNICAÇÃO! Verifique se as Regras do Firebase estão como 'true'.\nDetalhes do erro: " + error.message);
+                alert("ERRO DE COMUNICAÇÃO! Verifique as Regras do Firebase.\nDetalhes: " + error.message);
             });
         }
 
