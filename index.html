@@ -78,7 +78,7 @@
                         <span id="badgeAba2" class="hidden ml-2 bg-yellow-500 text-white rounded-full px-2 py-0.5 text-xs font-bold shadow-lg">0</span>
                     </button>
                     <button onclick="switchTab('aba3')" id="btn-aba3" class="py-3 text-sm md:text-base font-semibold rounded-md text-white hover:bg-blue-700 transition-colors flex items-center justify-center">
-                        3. Urna
+                        3. Apto a Votar
                         <span id="badgeAba3" class="hidden ml-2 bg-green-500 text-white rounded-full px-2 py-0.5 text-xs font-bold shadow-lg">0</span>
                     </button>
                     <button onclick="switchTab('aba4')" id="btn-aba4" class="py-3 text-sm md:text-base font-semibold rounded-md text-white hover:bg-blue-700 transition-colors flex items-center justify-center">
@@ -140,7 +140,7 @@
                 <div id="listaCaderno" class="space-y-4"></div>
             </section>
 
-            <!-- ABA 3: URNA (EXPURGO) -->
+            <!-- ABA 3: APTO A VOTAR -->
             <section id="aba3" class="tab-content bg-white p-6 rounded-xl shadow-md">
                 <h2 class="text-xl font-bold text-gray-800 mb-6 border-b pb-2 flex justify-between items-center">
                     <span>Apto a Votar</span>
@@ -174,31 +174,26 @@
         
         let filaEleitores = []; 
         let filaRejeitados = []; 
-        let filaAtual = null; // Começa vazio até a pessoa escolher na tela inicial
+        let filaAtual = null; 
 
         // --- NOVA FUNÇÃO: INICIAR SISTEMA ---
         function iniciarSistema() {
-            // 1. Pega a seção escolhida na tela inicial
             const secaoEscolhida = document.getElementById('selectFilaInicial').value;
             filaAtual = secaoEscolhida;
 
-            // 2. Sincroniza o seletor do topo do aplicativo para ficar igual
             document.getElementById('selectFila').value = secaoEscolhida;
 
-            // 3. Atualiza os crachás/labels visuais das abas
             document.getElementById('labelFilaAtualAba1').innerText = "Seção " + filaAtual;
             document.getElementById('labelFilaAtualAba2').innerText = "Seção " + filaAtual;
             document.getElementById('labelFilaAtualAba3').innerText = "Seção " + filaAtual;
 
-            // 4. Esconde a tela inicial e mostra o aplicativo
             document.getElementById('telaSelecaoInicial').classList.add('hidden');
             document.getElementById('telaApp').classList.remove('hidden');
 
-            // 5. Inicia a comunicação com o banco de dados
             escutarFilaFirebase();
         }
 
-        // --- 2. LÓGICA DE MÚLTIPLAS FILAS (Seletor do topo) ---
+        // --- 2. LÓGICA DE MÚLTIPLAS FILAS ---
         function mudarFila() {
             db.ref('filas/' + filaAtual).off(); 
             filaAtual = document.getElementById('selectFila').value;
@@ -280,7 +275,9 @@
                 titulo: titulo,
                 status: 'aguardando_caderno'
             }).then(() => {
+                // BUG CORRIGIDO: Agora o campo de Título é limpo também!
                 inputNome.value = '';
+                inputTitulo.value = '';
                 document.getElementById('checkNaoSabeSecao').checked = false;
                 document.getElementById('checkSemTitulo').checked = false;
                 document.getElementById('checkSemTitulo').disabled = false;
@@ -298,10 +295,7 @@
         function rejeitarDaSecao(id) {
             const eleitor = filaEleitores.find(e => e.id === id);
             if(eleitor) {
-                // Remove da seção atual
                 db.ref('filas/' + filaAtual + '/' + id).remove();
-                
-                // Envia para a busca global marcando que a seção atual já negou ele
                 db.ref('fila_geral').push({
                     nome: eleitor.nome,
                     titulo: eleitor.titulo,
@@ -336,7 +330,6 @@
 
         // --- 5. ESCUTADORES EM TEMPO REAL ---
         function escutarFilaFirebase() {
-            // Escuta a fila específica da seção
             db.ref('filas/' + filaAtual).on('value', (snapshot) => {
                 filaEleitores = [];
                 snapshot.forEach((child) => {
@@ -345,7 +338,6 @@
                 renderizarListas();
             });
 
-            // Escuta a Busca Geral
             db.ref('fila_geral').on('value', (snapshot) => {
                 filaRejeitados = [];
                 snapshot.forEach((child) => {
@@ -354,8 +346,6 @@
                 renderizarListas();
             });
         }
-
-        // (Removido o window.onload antigo, agora a escuta só começa ao clicar no botão Entrar)
 
         // --- 6. RENDERIZAÇÃO NA TELA ---
         function renderizarListas() {
