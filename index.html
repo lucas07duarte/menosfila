@@ -39,11 +39,19 @@
                 </div>
             </div>
 
-            <!-- MENU DE 4 ABAS -->
+            <!-- MENU DE 4 ABAS COM BADGES -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-1 bg-blue-900 p-1 rounded-lg">
-                <button onclick="switchTab('aba1')" id="btn-aba1" class="py-3 text-sm md:text-base font-semibold rounded-md bg-white text-blue-800 transition-colors">1. Fila</button>
-                <button onclick="switchTab('aba2')" id="btn-aba2" class="py-3 text-sm md:text-base font-semibold rounded-md text-white hover:bg-blue-700 transition-colors">2. Caderno</button>
-                <button onclick="switchTab('aba3')" id="btn-aba3" class="py-3 text-sm md:text-base font-semibold rounded-md text-white hover:bg-blue-700 transition-colors">3. Urna</button>
+                <button onclick="switchTab('aba1')" id="btn-aba1" class="py-3 text-sm md:text-base font-semibold rounded-md bg-white text-blue-800 transition-colors flex items-center justify-center">
+                    1. Fila
+                </button>
+                <button onclick="switchTab('aba2')" id="btn-aba2" class="py-3 text-sm md:text-base font-semibold rounded-md text-white hover:bg-blue-700 transition-colors flex items-center justify-center">
+                    2. Caderno
+                    <span id="badgeAba2" class="hidden ml-2 bg-yellow-500 text-white rounded-full px-2 py-0.5 text-xs font-bold shadow-lg">0</span>
+                </button>
+                <button onclick="switchTab('aba3')" id="btn-aba3" class="py-3 text-sm md:text-base font-semibold rounded-md text-white hover:bg-blue-700 transition-colors flex items-center justify-center">
+                    3. Urna
+                    <span id="badgeAba3" class="hidden ml-2 bg-green-500 text-white rounded-full px-2 py-0.5 text-xs font-bold shadow-lg">0</span>
+                </button>
                 <button onclick="switchTab('aba4')" id="btn-aba4" class="py-3 text-sm md:text-base font-semibold rounded-md text-white hover:bg-blue-700 transition-colors flex items-center justify-center">
                     4. Busca Geral
                     <span id="badgeAba4" class="hidden ml-2 bg-red-500 text-white rounded-full px-2 py-0.5 text-xs font-bold alerta-pisca shadow-lg">0</span>
@@ -220,7 +228,6 @@
                 titulo: titulo,
                 status: 'aguardando_caderno'
             }).then(() => {
-                // Fluxo super rápido: sem alertas, só limpa a tela.
                 inputNome.value = '';
                 document.getElementById('checkNaoSabeSecao').checked = false;
                 document.getElementById('checkSemTitulo').checked = false;
@@ -232,7 +239,6 @@
             });
         }
 
-        // ABA 2: Ações
         function confirmarNoCaderno(id) {
             db.ref('filas/' + filaAtual + '/' + id).update({ status: 'aguardando_urna' });
         }
@@ -250,12 +256,10 @@
             }
         }
 
-        // ABA 3: Ação (Expurgo direto, sem confirmação)
         function confirmarVotoEApagar(id) {
             db.ref('filas/' + filaAtual + '/' + id).remove();
         }
 
-        // ABA 4: Ações (Busca Geral)
         function aceitarDaBuscaGeral(id) {
             const eleitor = filaRejeitados.find(e => e.id === id);
             if(eleitor) {
@@ -276,7 +280,6 @@
         function escutarFilaFirebase() {
             db.ref('filas/' + filaAtual).on('value', (snapshot) => {
                 filaEleitores = [];
-                // CORREÇÃO DO BUG: Usando {} para não retornar valor e parar o loop do Firebase!
                 snapshot.forEach((child) => {
                     filaEleitores.push({ id: child.key, ...child.val() });
                 });
@@ -286,7 +289,6 @@
 
         db.ref('fila_geral').on('value', (snapshot) => {
             filaRejeitados = [];
-            // CORREÇÃO DO BUG: Usando {} aqui também.
             snapshot.forEach((child) => {
                 filaRejeitados.push({ id: child.key, ...child.val() });
             });
@@ -302,11 +304,14 @@
             const listaRejeitados = document.getElementById('listaRejeitados');
             
             listaCaderno.innerHTML = ''; listaUrna.innerHTML = ''; listaRejeitados.innerHTML = '';
-            let cadernoVazio = true; let urnaVazia = true; let rejeitadosVisiveis = 0;
+            
+            let qtdCaderno = 0; 
+            let qtdUrna = 0; 
+            let rejeitadosVisiveis = 0;
 
             filaEleitores.forEach(eleitor => {
                 if (eleitor.status === 'aguardando_caderno') {
-                    cadernoVazio = false;
+                    qtdCaderno++;
                     listaCaderno.innerHTML += `
                         <div class="flex flex-col md:flex-row justify-between items-center p-4 border-l-4 border-yellow-500 bg-yellow-50 rounded shadow-sm gap-4">
                             <div class="text-center md:text-left w-full">
@@ -324,7 +329,7 @@
                         </div>`;
                 }
                 if (eleitor.status === 'aguardando_urna') {
-                    urnaVazia = false;
+                    qtdUrna++;
                     listaUrna.innerHTML += `
                         <div class="flex justify-between items-center p-4 border-l-4 border-green-500 bg-green-50 rounded shadow-sm">
                             <div>
@@ -360,16 +365,34 @@
                 }
             });
 
-            if (cadernoVazio) listaCaderno.innerHTML = '<p class="text-gray-500 text-center py-8">Ninguém aguardando na Seção ' + filaAtual + '.</p>';
-            if (urnaVazia) listaUrna.innerHTML = '<p class="text-gray-500 text-center py-8">Ninguém aguardando na Seção ' + filaAtual + '.</p>';
+            // Exibição de listas vazias
+            if (qtdCaderno === 0) listaCaderno.innerHTML = '<p class="text-gray-500 text-center py-8">Ninguém aguardando na Seção ' + filaAtual + '.</p>';
+            if (qtdUrna === 0) listaUrna.innerHTML = '<p class="text-gray-500 text-center py-8">Ninguém aguardando na Seção ' + filaAtual + '.</p>';
             if (rejeitadosVisiveis === 0) listaRejeitados.innerHTML = '<p class="text-gray-500 text-center py-8">Ninguém perdido no momento.</p>';
 
-            const badge = document.getElementById('badgeAba4');
-            if (rejeitadosVisiveis > 0) {
-                badge.classList.remove('hidden');
-                badge.innerText = rejeitadosVisiveis;
+            // Controle dos Alertas Visuais (Badges nas abas)
+            const badge2 = document.getElementById('badgeAba2');
+            if (qtdCaderno > 0) {
+                badge2.classList.remove('hidden');
+                badge2.innerText = qtdCaderno;
             } else {
-                badge.classList.add('hidden');
+                badge2.classList.add('hidden');
+            }
+
+            const badge3 = document.getElementById('badgeAba3');
+            if (qtdUrna > 0) {
+                badge3.classList.remove('hidden');
+                badge3.innerText = qtdUrna;
+            } else {
+                badge3.classList.add('hidden');
+            }
+
+            const badge4 = document.getElementById('badgeAba4');
+            if (rejeitadosVisiveis > 0) {
+                badge4.classList.remove('hidden');
+                badge4.innerText = rejeitadosVisiveis;
+            } else {
+                badge4.classList.add('hidden');
             }
         }
     </script>
