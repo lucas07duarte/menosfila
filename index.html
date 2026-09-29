@@ -21,114 +21,144 @@
 </head>
 <body class="bg-gray-100 min-h-screen font-sans pb-10">
 
-    <header class="bg-blue-800 text-white shadow-md">
-        <div class="max-w-4xl mx-auto p-4">
+    <!-- ========================================== -->
+    <!-- TELA DE SELEÇÃO INICIAL (OBRIGATÓRIA) -->
+    <!-- ========================================== -->
+    <div id="telaSelecaoInicial" class="fixed inset-0 bg-gray-200 z-50 flex items-center justify-center p-4">
+        <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-sm text-center">
+            <h1 class="text-3xl font-bold text-blue-800 mb-2">Bem-vindo</h1>
+            <p class="text-gray-600 mb-8 font-medium">Por favor, confirme a sua seção para iniciar os trabalhos.</p>
             
-            <div class="flex flex-col md:flex-row justify-between items-center mb-4">
-                <h1 class="text-2xl font-bold">Controle de Fluxo</h1>
-                
-                <div class="mt-2 md:mt-0 bg-blue-900 p-2 rounded-lg flex items-center shadow-inner">
-                    <label class="font-semibold mr-3 text-blue-200">Sua Seção:</label>
-                    <select id="selectFila" onchange="mudarFila()" class="text-gray-900 font-bold p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer">
-                        <option value="74">Seção 74</option>
-                        <option value="75">Seção 75</option>
-                        <option value="76">Seção 76</option>
-                        <option value="77">Seção 77</option>
-                        <option value="78">Seção 78</option>
-                    </select>
-                </div>
+            <div class="mb-8 text-left">
+                <label class="block text-gray-700 font-bold mb-2">Selecione a Seção:</label>
+                <select id="selectFilaInicial" class="w-full text-xl p-4 border-2 border-blue-300 rounded-lg focus:ring-4 focus:ring-blue-500 outline-none cursor-pointer bg-blue-50 text-blue-900 font-bold">
+                    <option value="74">Seção 74</option>
+                    <option value="75">Seção 75</option>
+                    <option value="76">Seção 76</option>
+                    <option value="77">Seção 77</option>
+                    <option value="78">Seção 78</option>
+                </select>
             </div>
 
-            <!-- MENU DE 4 ABAS COM BADGES -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-1 bg-blue-900 p-1 rounded-lg">
-                <button onclick="switchTab('aba1')" id="btn-aba1" class="py-3 text-sm md:text-base font-semibold rounded-md bg-white text-blue-800 transition-colors flex items-center justify-center">
-                    1. Fila
-                </button>
-                <button onclick="switchTab('aba2')" id="btn-aba2" class="py-3 text-sm md:text-base font-semibold rounded-md text-white hover:bg-blue-700 transition-colors flex items-center justify-center">
-                    2. Caderno
-                    <span id="badgeAba2" class="hidden ml-2 bg-yellow-500 text-white rounded-full px-2 py-0.5 text-xs font-bold shadow-lg">0</span>
-                </button>
-                <button onclick="switchTab('aba3')" id="btn-aba3" class="py-3 text-sm md:text-base font-semibold rounded-md text-white hover:bg-blue-700 transition-colors flex items-center justify-center">
-                    3. Urna
-                    <span id="badgeAba3" class="hidden ml-2 bg-green-500 text-white rounded-full px-2 py-0.5 text-xs font-bold shadow-lg">0</span>
-                </button>
-                <button onclick="switchTab('aba4')" id="btn-aba4" class="py-3 text-sm md:text-base font-semibold rounded-md text-white hover:bg-blue-700 transition-colors flex items-center justify-center">
-                    4. Busca Geral
-                    <span id="badgeAba4" class="hidden ml-2 bg-red-500 text-white rounded-full px-2 py-0.5 text-xs font-bold alerta-pisca shadow-lg">0</span>
-                </button>
-            </div>
+            <button onclick="iniciarSistema()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-lg text-xl shadow-lg transition-colors">
+                Entrar no Sistema
+            </button>
         </div>
-    </header>
+    </div>
 
-    <main class="max-w-4xl mx-auto p-4 mt-4">
-        <!-- ABA 1: INSERÇÃO -->
-        <section id="aba1" class="tab-content active bg-white p-6 rounded-xl shadow-md">
-            <h2 class="text-xl font-bold text-gray-800 mb-6 border-b pb-2 flex justify-between items-center">
-                <span>Entrada de Eleitor</span>
-                <span id="labelFilaAtualAba1" class="text-blue-600 bg-blue-100 px-3 py-1 rounded-full text-sm font-bold">Seção 74</span>
-            </h2>
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-gray-700 font-semibold mb-2">Nome Completo</label>
-                    <input type="text" id="inputNome" autocomplete="off" placeholder="Ex: Maria da Silva" 
-                           class="w-full p-4 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none uppercase">
-                </div>
+    <!-- ========================================== -->
+    <!-- APLICATIVO PRINCIPAL (Escondido no início) -->
+    <!-- ========================================== -->
+    <div id="telaApp" class="hidden">
+        <header class="bg-blue-800 text-white shadow-md">
+            <div class="max-w-4xl mx-auto p-4">
                 
-                <div>
-                    <label class="block text-gray-700 font-semibold mb-2">Título de Eleitor (12 dígitos)</label>
-                    <input type="text" id="inputTitulo" autocomplete="off" maxlength="12" inputmode="numeric"
-                           oninput="this.value = this.value.replace(/[^0-9]/g, '');"
-                           placeholder="Ex: 123456789012" 
-                           class="w-full p-4 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors">
+                <div class="flex flex-col md:flex-row justify-between items-center mb-4">
+                    <h1 class="text-2xl font-bold">Controle de Fluxo</h1>
+                    
+                    <div class="mt-2 md:mt-0 bg-blue-900 p-2 rounded-lg flex items-center shadow-inner">
+                        <label class="font-semibold mr-3 text-blue-200">Sua Seção:</label>
+                        <select id="selectFila" onchange="mudarFila()" class="text-gray-900 font-bold p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer">
+                            <option value="74">Seção 74</option>
+                            <option value="75">Seção 75</option>
+                            <option value="76">Seção 76</option>
+                            <option value="77">Seção 77</option>
+                            <option value="78">Seção 78</option>
+                        </select>
+                    </div>
                 </div>
 
-                <div class="flex items-center mt-2 p-2 bg-gray-50 rounded border border-gray-200">
-                    <input type="checkbox" id="checkSemTitulo" onchange="alternarCampoTitulo()" class="w-6 h-6 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
-                    <label for="checkSemTitulo" class="ml-3 text-gray-700 font-medium cursor-pointer">
-                        Sem título de eleitor
-                    </label>
+                <!-- MENU DE 4 ABAS COM BADGES -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-1 bg-blue-900 p-1 rounded-lg">
+                    <button onclick="switchTab('aba1')" id="btn-aba1" class="py-3 text-sm md:text-base font-semibold rounded-md bg-white text-blue-800 transition-colors flex items-center justify-center">
+                        1. Fila
+                    </button>
+                    <button onclick="switchTab('aba2')" id="btn-aba2" class="py-3 text-sm md:text-base font-semibold rounded-md text-white hover:bg-blue-700 transition-colors flex items-center justify-center">
+                        2. Caderno
+                        <span id="badgeAba2" class="hidden ml-2 bg-yellow-500 text-white rounded-full px-2 py-0.5 text-xs font-bold shadow-lg">0</span>
+                    </button>
+                    <button onclick="switchTab('aba3')" id="btn-aba3" class="py-3 text-sm md:text-base font-semibold rounded-md text-white hover:bg-blue-700 transition-colors flex items-center justify-center">
+                        3. Urna
+                        <span id="badgeAba3" class="hidden ml-2 bg-green-500 text-white rounded-full px-2 py-0.5 text-xs font-bold shadow-lg">0</span>
+                    </button>
+                    <button onclick="switchTab('aba4')" id="btn-aba4" class="py-3 text-sm md:text-base font-semibold rounded-md text-white hover:bg-blue-700 transition-colors flex items-center justify-center">
+                        4. Busca Geral
+                        <span id="badgeAba4" class="hidden ml-2 bg-red-500 text-white rounded-full px-2 py-0.5 text-xs font-bold alerta-pisca shadow-lg">0</span>
+                    </button>
                 </div>
-
-                <div class="flex items-center mt-2 p-3 bg-red-50 rounded border border-red-200">
-                    <input type="checkbox" id="checkNaoSabeSecao" onchange="alternarSabeSecao()" class="w-6 h-6 text-red-600 rounded border-red-300 focus:ring-red-500">
-                    <label for="checkNaoSabeSecao" class="ml-3 text-red-700 font-bold cursor-pointer">
-                        Eleitor NÃO SABE a seção (Enviar para Busca Geral)
-                    </label>
-                </div>
-
-                <button onclick="adicionarFila()" class="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-lg text-xl shadow-lg transition-colors">
-                    + Adicionar à Fila
-                </button>
             </div>
-        </section>
+        </header>
 
-        <!-- ABA 2: CADERNO -->
-        <section id="aba2" class="tab-content bg-white p-6 rounded-xl shadow-md">
-            <h2 class="text-xl font-bold text-gray-800 mb-6 border-b pb-2 flex justify-between items-center">
-                <span>Procurar no Caderno</span>
-                <span id="labelFilaAtualAba2" class="text-yellow-600 bg-yellow-100 px-3 py-1 rounded-full text-sm font-bold">Seção 74</span>
-            </h2>
-            <div id="listaCaderno" class="space-y-4"></div>
-        </section>
+        <main class="max-w-4xl mx-auto p-4 mt-4">
+            <!-- ABA 1: INSERÇÃO -->
+            <section id="aba1" class="tab-content active bg-white p-6 rounded-xl shadow-md">
+                <h2 class="text-xl font-bold text-gray-800 mb-6 border-b pb-2 flex justify-between items-center">
+                    <span>Entrada de Eleitor</span>
+                    <span id="labelFilaAtualAba1" class="text-blue-600 bg-blue-100 px-3 py-1 rounded-full text-sm font-bold">Seção 74</span>
+                </h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-gray-700 font-semibold mb-2">Nome Completo</label>
+                        <input type="text" id="inputNome" autocomplete="off" placeholder="Ex: Maria da Silva" 
+                               class="w-full p-4 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none uppercase">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-700 font-semibold mb-2">Título de Eleitor (12 dígitos)</label>
+                        <input type="text" id="inputTitulo" autocomplete="off" maxlength="12" inputmode="numeric"
+                               oninput="this.value = this.value.replace(/[^0-9]/g, '');"
+                               placeholder="Ex: 123456789012" 
+                               class="w-full p-4 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors">
+                    </div>
 
-        <!-- ABA 3: URNA (EXPURGO) -->
-        <section id="aba3" class="tab-content bg-white p-6 rounded-xl shadow-md">
-            <h2 class="text-xl font-bold text-gray-800 mb-6 border-b pb-2 flex justify-between items-center">
-                <span>Liberar Urna (Expurgo)</span>
-                <span id="labelFilaAtualAba3" class="text-green-600 bg-green-100 px-3 py-1 rounded-full text-sm font-bold">Seção 74</span>
-            </h2>
-            <div id="listaUrna" class="space-y-4"></div>
-        </section>
+                    <div class="flex items-center mt-2 p-2 bg-gray-50 rounded border border-gray-200">
+                        <input type="checkbox" id="checkSemTitulo" onchange="alternarCampoTitulo()" class="w-6 h-6 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
+                        <label for="checkSemTitulo" class="ml-3 text-gray-700 font-medium cursor-pointer">
+                            Sem título de eleitor
+                        </label>
+                    </div>
 
-        <!-- ABA 4: BUSCA GERAL -->
-        <section id="aba4" class="tab-content bg-white p-6 rounded-xl shadow-md">
-            <h2 class="text-xl font-bold text-red-700 mb-2 border-b pb-2 flex justify-between items-center">
-                <span>Busca Geral (Eleitores Perdidos)</span>
-            </h2>
-            <p class="text-gray-600 mb-6 text-sm">Estas pessoas foram rejeitadas por outras seções ou não sabem sua seção original.</p>
-            <div id="listaRejeitados" class="space-y-4"></div>
-        </section>
-    </main>
+                    <div class="flex items-center mt-2 p-3 bg-red-50 rounded border border-red-200">
+                        <input type="checkbox" id="checkNaoSabeSecao" onchange="alternarSabeSecao()" class="w-6 h-6 text-red-600 rounded border-red-300 focus:ring-red-500">
+                        <label for="checkNaoSabeSecao" class="ml-3 text-red-700 font-bold cursor-pointer">
+                            Eleitor NÃO SABE a seção (Enviar para Busca Geral)
+                        </label>
+                    </div>
+
+                    <button onclick="adicionarFila()" class="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-lg text-xl shadow-lg transition-colors">
+                        + Adicionar à Fila
+                    </button>
+                </div>
+            </section>
+
+            <!-- ABA 2: CADERNO -->
+            <section id="aba2" class="tab-content bg-white p-6 rounded-xl shadow-md">
+                <h2 class="text-xl font-bold text-gray-800 mb-6 border-b pb-2 flex justify-between items-center">
+                    <span>Procurar no Caderno</span>
+                    <span id="labelFilaAtualAba2" class="text-yellow-600 bg-yellow-100 px-3 py-1 rounded-full text-sm font-bold">Seção 74</span>
+                </h2>
+                <div id="listaCaderno" class="space-y-4"></div>
+            </section>
+
+            <!-- ABA 3: URNA (EXPURGO) -->
+            <section id="aba3" class="tab-content bg-white p-6 rounded-xl shadow-md">
+                <h2 class="text-xl font-bold text-gray-800 mb-6 border-b pb-2 flex justify-between items-center">
+                    <span>Liberar Urna (Expurgo)</span>
+                    <span id="labelFilaAtualAba3" class="text-green-600 bg-green-100 px-3 py-1 rounded-full text-sm font-bold">Seção 74</span>
+                </h2>
+                <div id="listaUrna" class="space-y-4"></div>
+            </section>
+
+            <!-- ABA 4: BUSCA GERAL -->
+            <section id="aba4" class="tab-content bg-white p-6 rounded-xl shadow-md">
+                <h2 class="text-xl font-bold text-red-700 mb-2 border-b pb-2 flex justify-between items-center">
+                    <span>Busca Geral (Eleitores Perdidos)</span>
+                </h2>
+                <p class="text-gray-600 mb-6 text-sm">Estas pessoas foram rejeitadas por outras seções ou não sabem sua seção original.</p>
+                <div id="listaRejeitados" class="space-y-4"></div>
+            </section>
+        </main>
+    </div>
 
     <script>
         // --- 1. CONFIGURAÇÃO DO FIREBASE ---
@@ -144,9 +174,31 @@
         
         let filaEleitores = []; 
         let filaRejeitados = []; 
-        let filaAtual = document.getElementById('selectFila').value;
+        let filaAtual = null; // Começa vazio até a pessoa escolher na tela inicial
 
-        // --- 2. LÓGICA DE MÚLTIPLAS FILAS ---
+        // --- NOVA FUNÇÃO: INICIAR SISTEMA ---
+        function iniciarSistema() {
+            // 1. Pega a seção escolhida na tela inicial
+            const secaoEscolhida = document.getElementById('selectFilaInicial').value;
+            filaAtual = secaoEscolhida;
+
+            // 2. Sincroniza o seletor do topo do aplicativo para ficar igual
+            document.getElementById('selectFila').value = secaoEscolhida;
+
+            // 3. Atualiza os crachás/labels visuais das abas
+            document.getElementById('labelFilaAtualAba1').innerText = "Seção " + filaAtual;
+            document.getElementById('labelFilaAtualAba2').innerText = "Seção " + filaAtual;
+            document.getElementById('labelFilaAtualAba3').innerText = "Seção " + filaAtual;
+
+            // 4. Esconde a tela inicial e mostra o aplicativo
+            document.getElementById('telaSelecaoInicial').classList.add('hidden');
+            document.getElementById('telaApp').classList.remove('hidden');
+
+            // 5. Inicia a comunicação com o banco de dados
+            escutarFilaFirebase();
+        }
+
+        // --- 2. LÓGICA DE MÚLTIPLAS FILAS (Seletor do topo) ---
         function mudarFila() {
             db.ref('filas/' + filaAtual).off(); 
             filaAtual = document.getElementById('selectFila').value;
@@ -256,7 +308,7 @@
                     status: 'aguardando_caderno',
                     origem_rejeicao: filaAtual,
                     negado_por: {
-                        [filaAtual]: true // O Firebase já cria ele com o status "negado" pela sua seção
+                        [filaAtual]: true 
                     }
                 });
             }
@@ -284,6 +336,7 @@
 
         // --- 5. ESCUTADORES EM TEMPO REAL ---
         function escutarFilaFirebase() {
+            // Escuta a fila específica da seção
             db.ref('filas/' + filaAtual).on('value', (snapshot) => {
                 filaEleitores = [];
                 snapshot.forEach((child) => {
@@ -291,17 +344,18 @@
                 });
                 renderizarListas();
             });
+
+            // Escuta a Busca Geral
+            db.ref('fila_geral').on('value', (snapshot) => {
+                filaRejeitados = [];
+                snapshot.forEach((child) => {
+                    filaRejeitados.push({ id: child.key, ...child.val() });
+                });
+                renderizarListas();
+            });
         }
 
-        db.ref('fila_geral').on('value', (snapshot) => {
-            filaRejeitados = [];
-            snapshot.forEach((child) => {
-                filaRejeitados.push({ id: child.key, ...child.val() });
-            });
-            renderizarListas();
-        });
-
-        window.onload = () => { escutarFilaFirebase(); };
+        // (Removido o window.onload antigo, agora a escuta só começa ao clicar no botão Entrar)
 
         // --- 6. RENDERIZAÇÃO NA TELA ---
         function renderizarListas() {
@@ -350,7 +404,6 @@
             });
 
             filaRejeitados.forEach(eleitor => {
-                // CORREÇÃO: Não exibe se a origem da rejeição foi a própria seção, ou se ela já negou na busca
                 if (eleitor.origem_rejeicao !== filaAtual && (!eleitor.negado_por || !eleitor.negado_por[filaAtual])) {
                     rejeitadosVisiveis++;
                     listaRejeitados.innerHTML += `
