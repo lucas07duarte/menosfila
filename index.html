@@ -365,7 +365,8 @@
                         <div class="flex flex-col md:flex-row justify-between items-center p-4 border-l-4 border-yellow-500 bg-yellow-50 rounded shadow-sm gap-4">
                             <div class="text-center md:text-left w-full">
                                 <p class="text-xl font-bold text-gray-800">${eleitor.nome}</p>
-                                <p class="text-xl md:text-2xl text-gray-900 font-mono tracking-widest font-bold mt-2">${formatarTitulo(eleitor.titulo)}</p>
+                                <!-- TAMANHO DO NÚMERO AUMENTADO AQUI (text-3xl) -->
+                                <p class="text-3xl md:text-4xl text-gray-900 font-mono tracking-widest font-black mt-2">${formatarTitulo(eleitor.titulo)}</p>
                             </div>
                             <div class="flex flex-col sm:flex-row w-full md:w-auto gap-2">
                                 <button onclick="rejeitarDaSecao('${eleitor.id}')" class="w-full bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-3 px-4 rounded transition-colors whitespace-nowrap">
@@ -383,7 +384,8 @@
                         <div class="flex flex-col md:flex-row justify-between items-center p-4 border-l-4 border-green-500 bg-green-50 rounded shadow-sm gap-4">
                             <div class="text-center md:text-left w-full">
                                 <p class="text-xl font-bold text-gray-800">${eleitor.nome}</p>
-                                <p class="text-xl md:text-2xl text-gray-900 font-mono tracking-widest font-bold mt-2">${formatarTitulo(eleitor.titulo)}</p>
+                                <!-- TAMANHO DO NÚMERO AUMENTADO AQUI (text-3xl) -->
+                                <p class="text-3xl md:text-4xl text-gray-900 font-mono tracking-widest font-black mt-2">${formatarTitulo(eleitor.titulo)}</p>
                             </div>
                             <div class="flex flex-col sm:flex-row w-full md:w-auto gap-2">
                                 <button onclick="confirmarVotoEApagar('${eleitor.id}')" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-6 rounded shadow flex justify-center items-center">
@@ -401,7 +403,8 @@
                         <div class="flex flex-col md:flex-row justify-between items-center p-4 border-l-4 border-red-500 bg-red-50 rounded shadow-sm gap-4">
                             <div class="text-center md:text-left w-full">
                                 <p class="text-xl font-bold text-gray-800">${eleitor.nome}</p>
-                                <p class="text-xl md:text-2xl text-gray-900 font-mono tracking-widest font-bold mt-2">${formatarTitulo(eleitor.titulo)}</p>
+                                <!-- TAMANHO DO NÚMERO AUMENTADO AQUI (text-3xl) -->
+                                <p class="text-3xl md:text-4xl text-gray-900 font-mono tracking-widest font-black mt-2">${formatarTitulo(eleitor.titulo)}</p>
                                 ${eleitor.origem_rejeicao ? `<p class="text-sm font-bold text-red-600 mt-2">Rejeitado pela Seção ${eleitor.origem_rejeicao}</p>` : ''}
                             </div>
                             <div class="flex flex-col sm:flex-row w-full md:w-auto gap-2">
