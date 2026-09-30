@@ -22,7 +22,7 @@
 <body class="bg-gray-100 min-h-screen font-sans pb-10">
 
     <!-- ========================================== -->
-    <!-- TELA DE SELEÇÃO INICIAL (OBRIGATÓRIA) -->
+    <!-- TELA DE SELEÇÃO INICIAL -->
     <!-- ========================================== -->
     <div id="telaSelecaoInicial" class="fixed inset-0 bg-gray-200 z-50 flex items-center justify-center p-4">
         <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-sm text-center">
@@ -47,11 +47,11 @@
     </div>
 
     <!-- ========================================== -->
-    <!-- APLICATIVO PRINCIPAL (Escondido no início) -->
+    <!-- APLICATIVO PRINCIPAL -->
     <!-- ========================================== -->
     <div id="telaApp" class="hidden">
         <header class="bg-blue-800 text-white shadow-md">
-            <div class="max-w-4xl mx-auto p-4">
+            <div class="max-w-5xl mx-auto p-4">
                 
                 <div class="flex flex-col md:flex-row justify-between items-center mb-4">
                     <h1 class="text-2xl font-bold">Controle de Fluxo</h1>
@@ -68,8 +68,8 @@
                     </div>
                 </div>
 
-                <!-- MENU DE 4 ABAS COM BADGES -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-1 bg-blue-900 p-1 rounded-lg">
+                <!-- MENU DE 5 ABAS -->
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-1 bg-blue-900 p-1 rounded-lg">
                     <button onclick="switchTab('aba1')" id="btn-aba1" class="py-3 text-sm md:text-base font-semibold rounded-md bg-white text-blue-800 transition-colors flex items-center justify-center">
                         1. Fila
                     </button>
@@ -85,12 +85,16 @@
                         4. Busca Geral
                         <span id="badgeAba4" class="hidden ml-2 bg-red-500 text-white rounded-full px-2 py-0.5 text-xs font-bold alerta-pisca shadow-lg">0</span>
                     </button>
+                    <button onclick="switchTab('aba5')" id="btn-aba5" class="py-3 text-sm md:text-base font-semibold rounded-md text-white hover:bg-blue-700 transition-colors flex items-center justify-center">
+                        5. Retornos
+                        <span id="badgeAba5" class="hidden ml-2 bg-purple-500 text-white rounded-full px-2 py-0.5 text-xs font-bold alerta-pisca shadow-lg">0</span>
+                    </button>
                 </div>
             </div>
         </header>
 
-        <main class="max-w-4xl mx-auto p-4 mt-4">
-            <!-- ABA 1: INSERÇÃO -->
+        <main class="max-w-5xl mx-auto p-4 mt-4">
+            <!-- ABA 1: INSERÇÃO (Mesa A) -->
             <section id="aba1" class="tab-content active bg-white p-6 rounded-xl shadow-md">
                 <h2 class="text-xl font-bold text-gray-800 mb-6 border-b pb-2 flex justify-between items-center">
                     <span>Entrada de Eleitor</span>
@@ -102,36 +106,27 @@
                         <input type="text" id="inputNome" autocomplete="off" placeholder="Ex: Maria da Silva" 
                                class="w-full p-4 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none uppercase">
                     </div>
-                    
                     <div>
                         <label class="block text-gray-700 font-semibold mb-2">Título de Eleitor (12 dígitos)</label>
                         <input type="text" id="inputTitulo" autocomplete="off" maxlength="12" inputmode="numeric"
-                               oninput="this.value = this.value.replace(/[^0-9]/g, '');"
-                               placeholder="Ex: 123456789012" 
+                               oninput="this.value = this.value.replace(/[^0-9]/g, '');" placeholder="Ex: 123456789012" 
                                class="w-full p-4 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors">
                     </div>
-
                     <div class="flex items-center mt-2 p-2 bg-gray-50 rounded border border-gray-200">
                         <input type="checkbox" id="checkSemTitulo" onchange="alternarCampoTitulo()" class="w-6 h-6 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
-                        <label for="checkSemTitulo" class="ml-3 text-gray-700 font-medium cursor-pointer">
-                            Sem título de eleitor
-                        </label>
+                        <label for="checkSemTitulo" class="ml-3 text-gray-700 font-medium cursor-pointer">Sem título de eleitor</label>
                     </div>
-
                     <div class="flex items-center mt-2 p-3 bg-red-50 rounded border border-red-200">
                         <input type="checkbox" id="checkNaoSabeSecao" onchange="alternarSabeSecao()" class="w-6 h-6 text-red-600 rounded border-red-300 focus:ring-red-500">
-                        <label for="checkNaoSabeSecao" class="ml-3 text-red-700 font-bold cursor-pointer">
-                            Eleitor NÃO SABE a seção (Enviar para Busca Geral)
-                        </label>
+                        <label for="checkNaoSabeSecao" class="ml-3 text-red-700 font-bold cursor-pointer">Eleitor NÃO SABE a seção (Enviar para Busca Geral)</label>
                     </div>
-
                     <button onclick="adicionarFila()" class="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-lg text-xl shadow-lg transition-colors">
                         + Adicionar à Fila
                     </button>
                 </div>
             </section>
 
-            <!-- ABA 2: CADERNO -->
+            <!-- ABA 2: CADERNO (Mesa B) -->
             <section id="aba2" class="tab-content bg-white p-6 rounded-xl shadow-md">
                 <h2 class="text-xl font-bold text-gray-800 mb-6 border-b pb-2 flex justify-between items-center">
                     <span>Procurar no Caderno</span>
@@ -140,7 +135,7 @@
                 <div id="listaCaderno" class="space-y-4"></div>
             </section>
 
-            <!-- ABA 3: APTO A VOTAR -->
+            <!-- ABA 3: APTO A VOTAR (Mesa C) -->
             <section id="aba3" class="tab-content bg-white p-6 rounded-xl shadow-md">
                 <h2 class="text-xl font-bold text-gray-800 mb-6 border-b pb-2 flex justify-between items-center">
                     <span>Apto a Votar</span>
@@ -149,13 +144,26 @@
                 <div id="listaUrna" class="space-y-4"></div>
             </section>
 
-            <!-- ABA 4: BUSCA GERAL -->
+            <!-- ABA 4: BUSCA GERAL (Mesa B) -->
             <section id="aba4" class="tab-content bg-white p-6 rounded-xl shadow-md">
                 <h2 class="text-xl font-bold text-red-700 mb-2 border-b pb-2 flex justify-between items-center">
-                    <span>Busca Geral (Eleitores Perdidos)</span>
+                    <span>Busca Geral (Caderno)</span>
                 </h2>
-                <p class="text-gray-600 mb-6 text-sm">Estas pessoas foram rejeitadas por outras seções ou não sabem sua seção original.</p>
+                
+                <!-- Área reservada para os feedbacks das pessoas que o Caderno rejeitou -->
+                <div id="listaFeedbacksAba4" class="mb-8 empty:hidden"></div>
+
+                <p class="text-gray-600 mb-6 text-sm font-bold">Procurar no caderno: Estas pessoas foram rejeitadas por outras seções ou não sabem a seção.</p>
                 <div id="listaRejeitados" class="space-y-4"></div>
+            </section>
+
+            <!-- ABA 5: RETORNOS (Mesa A) -->
+            <section id="aba5" class="tab-content bg-white p-6 rounded-xl shadow-md">
+                <h2 class="text-xl font-bold text-purple-700 mb-2 border-b pb-2 flex justify-between items-center">
+                    <span>Retornos (Fila)</span>
+                </h2>
+                <p class="text-gray-600 mb-6 text-sm">Respostas para as pessoas que você marcou como "Não sabe a seção" na entrada. Avise-as na fila!</p>
+                <div id="listaRetornosAba5" class="space-y-4"></div>
             </section>
         </main>
     </div>
@@ -173,41 +181,34 @@
         const db = firebase.database();
         
         let filaEleitores = []; 
-        let filaRejeitados = []; 
+        let filaGeral = []; 
         let filaAtual = null; 
 
-        // --- NOVA FUNÇÃO: INICIAR SISTEMA ---
         function iniciarSistema() {
             const secaoEscolhida = document.getElementById('selectFilaInicial').value;
             filaAtual = secaoEscolhida;
-
             document.getElementById('selectFila').value = secaoEscolhida;
-
-            document.getElementById('labelFilaAtualAba1').innerText = "Seção " + filaAtual;
-            document.getElementById('labelFilaAtualAba2').innerText = "Seção " + filaAtual;
-            document.getElementById('labelFilaAtualAba3').innerText = "Seção " + filaAtual;
-
+            atualizarLabels();
             document.getElementById('telaSelecaoInicial').classList.add('hidden');
             document.getElementById('telaApp').classList.remove('hidden');
-
             escutarFilaFirebase();
         }
 
-        // --- 2. LÓGICA DE MÚLTIPLAS FILAS ---
         function mudarFila() {
             db.ref('filas/' + filaAtual).off(); 
             filaAtual = document.getElementById('selectFila').value;
-            
-            document.getElementById('labelFilaAtualAba1').innerText = "Seção " + filaAtual;
-            document.getElementById('labelFilaAtualAba2').innerText = "Seção " + filaAtual;
-            document.getElementById('labelFilaAtualAba3').innerText = "Seção " + filaAtual;
-            
+            atualizarLabels();
             filaEleitores = [];
             escutarFilaFirebase();
             renderizarListas();
         }
 
-        // --- 3. NAVEGAÇÃO E INTERFACE ---
+        function atualizarLabels() {
+            document.getElementById('labelFilaAtualAba1').innerText = "Seção " + filaAtual;
+            document.getElementById('labelFilaAtualAba2').innerText = "Seção " + filaAtual;
+            document.getElementById('labelFilaAtualAba3').innerText = "Seção " + filaAtual;
+        }
+
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('header button').forEach(btn => {
@@ -235,15 +236,10 @@
         function alternarSabeSecao() {
             const perdido = document.getElementById('checkNaoSabeSecao').checked;
             const checkSemTitulo = document.getElementById('checkSemTitulo');
-            
             if (perdido) {
-                checkSemTitulo.checked = true;
-                checkSemTitulo.disabled = true;
-                alternarCampoTitulo();
+                checkSemTitulo.checked = true; checkSemTitulo.disabled = true; alternarCampoTitulo();
             } else {
-                checkSemTitulo.disabled = false;
-                checkSemTitulo.checked = false;
-                alternarCampoTitulo();
+                checkSemTitulo.disabled = false; checkSemTitulo.checked = false; alternarCampoTitulo();
             }
         }
 
@@ -253,7 +249,7 @@
             return titulo.substring(0, 4) + ' ' + titulo.substring(4, 8) + ' ' + titulo.substring(8, 12);
         }
 
-        // --- 4. REGRAS DE NEGÓCIO ---
+        // --- REGRAS DE NEGÓCIO ---
         function adicionarFila() {
             const inputNome = document.getElementById('inputNome');
             const inputTitulo = document.getElementById('inputTitulo');
@@ -268,104 +264,128 @@
             if (perdido) titulo = "DESCONHECIDO";
             if (!semTitulo && !perdido && titulo.length !== 12) return alert("Preencha os 12 dígitos.");
 
-            const destino = perdido ? db.ref('fila_geral') : db.ref('filas/' + filaAtual);
-            
-            // Cria o objeto base do eleitor
-            let dadosEleitor = {
-                nome: nome,
-                titulo: titulo,
-                status: 'aguardando_caderno'
-            };
-
-            // Se não sabe a seção, adicionamos um aviso especial para a Busca Geral ver
             if (perdido) {
-                dadosEleitor.nao_sabe_secao = true;
+                // Se foi "Não Sabe a Seção" (Aba 1) o feedback voltará para a Aba 5!
+                db.ref('fila_geral').push({
+                    nome: nome,
+                    titulo: titulo,
+                    status: 'aguardando_caderno',
+                    secao_origem: filaAtual, 
+                    nao_sabe_secao: true,
+                    negado_por: { [filaAtual]: true }
+                }).then(limparFormulario);
+            } else {
+                db.ref('filas/' + filaAtual).push({
+                    nome: nome,
+                    titulo: titulo,
+                    status: 'aguardando_caderno'
+                }).then(limparFormulario);
             }
-            
-            destino.push(dadosEleitor).then(() => {
-                inputNome.value = '';
-                inputTitulo.value = '';
-                document.getElementById('checkNaoSabeSecao').checked = false;
-                document.getElementById('checkSemTitulo').checked = false;
-                document.getElementById('checkSemTitulo').disabled = false;
-                alternarCampoTitulo();
-                inputNome.focus();
-            }).catch((error) => {
-                alert("ERRO: " + error.message);
-            });
+        }
+
+        function limparFormulario() {
+            document.getElementById('inputNome').value = '';
+            document.getElementById('inputTitulo').value = '';
+            document.getElementById('checkNaoSabeSecao').checked = false;
+            document.getElementById('checkSemTitulo').checked = false;
+            document.getElementById('checkSemTitulo').disabled = false;
+            alternarCampoTitulo();
+            document.getElementById('inputNome').focus();
         }
 
         function confirmarNoCaderno(id) {
             db.ref('filas/' + filaAtual + '/' + id).update({ status: 'aguardando_urna' });
         }
 
-        function rejeitarDaSecao(id) {
-            const eleitor = filaEleitores.find(e => e.id === id);
-            if(eleitor) {
-                db.ref('filas/' + filaAtual + '/' + id).remove();
-                db.ref('fila_geral').push({
-                    nome: eleitor.nome,
-                    titulo: eleitor.titulo,
-                    status: 'aguardando_caderno',
-                    origem_rejeicao: filaAtual,
-                    negado_por: {
-                        [filaAtual]: true 
-                    }
-                });
-            }
-        }
-
         function confirmarVotoEApagar(id) {
             db.ref('filas/' + filaAtual + '/' + id).remove();
         }
 
-        function aceitarDaBuscaGeral(id) {
-            const eleitor = filaRejeitados.find(e => e.id === id);
+        function rejeitarDaSecao(id) {
+            const eleitor = filaEleitores.find(e => e.id === id);
             if(eleitor) {
-                db.ref('filas/' + filaAtual).push({
+                db.ref('filas/' + filaAtual + '/' + id).remove();
+                
+                // Se foi rejeitado da Aba 2, o feedback vai voltar para a Aba 4 do Caderno!
+                db.ref('fila_geral').push({
                     nome: eleitor.nome,
                     titulo: eleitor.titulo,
-                    status: 'aguardando_urna'
+                    status: 'aguardando_caderno',
+                    secao_origem: filaAtual,
+                    origem_rejeicao: filaAtual,
+                    negado_por: { [filaAtual]: true } 
                 });
-                db.ref('fila_geral/' + id).remove();
+            }
+        }
+
+        function aceitarDaBuscaGeral(id, acao) {
+            const eleitor = filaGeral.find(e => e.id === id);
+            if(eleitor) {
+                if(acao === 'aba2') {
+                    db.ref('filas/' + filaAtual).push({
+                        nome: eleitor.nome,
+                        titulo: eleitor.titulo,
+                        status: 'aguardando_caderno'
+                    });
+                }
+                
+                db.ref('fila_geral/' + id).update({
+                    status: 'encontrado',
+                    secao_destino: filaAtual,
+                    acao_destino: acao
+                });
             }
         }
 
         function negarDaBuscaGeral(id) {
-            db.ref('fila_geral/' + id + '/negado_por/' + filaAtual).set(true);
+            db.ref('fila_geral/' + id + '/negado_por/' + filaAtual).set(true).then(() => {
+                db.ref('fila_geral/' + id).once('value', snap => {
+                    const data = snap.val();
+                    if(data && data.negado_por) {
+                        const totalSecoes = document.getElementById('selectFila').options.length;
+                        if(Object.keys(data.negado_por).length >= totalSecoes) {
+                            db.ref('fila_geral/' + id).update({ status: 'rejeitado_por_todos' });
+                        }
+                    }
+                });
+            });
         }
 
-        // --- 5. ESCUTADORES EM TEMPO REAL ---
+        function apagarFeedback(id) {
+            db.ref('fila_geral/' + id).remove();
+        }
+
+        // --- ESCUTADORES EM TEMPO REAL ---
         function escutarFilaFirebase() {
             db.ref('filas/' + filaAtual).on('value', (snapshot) => {
                 filaEleitores = [];
-                snapshot.forEach((child) => {
-                    filaEleitores.push({ id: child.key, ...child.val() });
-                });
+                snapshot.forEach((child) => { filaEleitores.push({ id: child.key, ...child.val() }); });
                 renderizarListas();
             });
 
             db.ref('fila_geral').on('value', (snapshot) => {
-                filaRejeitados = [];
-                snapshot.forEach((child) => {
-                    filaRejeitados.push({ id: child.key, ...child.val() });
-                });
+                filaGeral = [];
+                snapshot.forEach((child) => { filaGeral.push({ id: child.key, ...child.val() }); });
                 renderizarListas();
             });
         }
 
-        // --- 6. RENDERIZAÇÃO NA TELA ---
+        // --- RENDERIZAÇÃO NA TELA ---
         function renderizarListas() {
             const listaCaderno = document.getElementById('listaCaderno');
             const listaUrna = document.getElementById('listaUrna');
-            const listaRejeitados = document.getElementById('listaRejeitados');
             
-            listaCaderno.innerHTML = ''; listaUrna.innerHTML = ''; listaRejeitados.innerHTML = '';
+            const listaRejeitados = document.getElementById('listaRejeitados'); // Quem as outras seções procuram (Aba 4)
+            const listaFeedbacksAba4 = document.getElementById('listaFeedbacksAba4'); // Respostas para o Mesa B (Aba 4)
+            const listaRetornosAba5 = document.getElementById('listaRetornosAba5'); // Respostas para o Mesa A (Aba 5)
             
-            let qtdCaderno = 0; 
-            let qtdUrna = 0; 
-            let rejeitadosVisiveis = 0;
+            listaCaderno.innerHTML = ''; listaUrna.innerHTML = ''; 
+            listaRejeitados.innerHTML = ''; listaFeedbacksAba4.innerHTML = ''; listaRetornosAba5.innerHTML = '';
+            
+            let qtdCaderno = 0; let qtdUrna = 0; let rejeitadosVisiveis = 0; 
+            let feedbacksAba4 = 0; let feedbacksAba5 = 0;
 
+            // ABAS 2 E 3
             filaEleitores.forEach(eleitor => {
                 if (eleitor.status === 'aguardando_caderno') {
                     qtdCaderno++;
@@ -402,61 +422,106 @@
                 }
             });
 
-            filaRejeitados.forEach(eleitor => {
-                if (eleitor.origem_rejeicao !== filaAtual && (!eleitor.negado_por || !eleitor.negado_por[filaAtual])) {
-                    rejeitadosVisiveis++;
-                    listaRejeitados.innerHTML += `
-                        <div class="flex flex-col md:flex-row justify-between items-center p-4 border-l-4 border-red-500 bg-red-50 rounded shadow-sm gap-4">
+            // ABAS GLOBAIS (4 e 5)
+            filaGeral.forEach(eleitor => {
+                
+                // 1. Procurar (Mostra na Aba 4 de todas as OUTRAS seções)
+                if (eleitor.status === 'aguardando_caderno') {
+                    if (eleitor.secao_origem !== filaAtual && (!eleitor.negado_por || !eleitor.negado_por[filaAtual])) {
+                        rejeitadosVisiveis++;
+                        listaRejeitados.innerHTML += `
+                            <div class="flex flex-col md:flex-row justify-between items-center p-4 border-l-4 border-red-500 bg-red-50 rounded shadow-sm gap-4">
+                                <div class="text-center md:text-left w-full">
+                                    <p class="text-xl font-bold text-gray-800">${eleitor.nome}</p>
+                                    <p class="text-2xl md:text-3xl text-gray-900 font-mono tracking-widest font-black mt-2">${formatarTitulo(eleitor.titulo)}</p>
+                                    ${eleitor.origem_rejeicao ? `<p class="text-sm font-bold text-red-600 mt-2">Rejeitado pela Seção ${eleitor.origem_rejeicao}</p>` : ''}
+                                    ${eleitor.nao_sabe_secao ? `<p class="text-sm font-bold text-blue-600 mt-2">❓ Não sabe a seção original</p>` : ''}
+                                </div>
+                                <div class="flex flex-col sm:flex-row w-full gap-2 mt-2 md:mt-0">
+                                    <button onclick="negarDaBuscaGeral('${eleitor.id}')" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-3 px-2 rounded transition-colors text-sm">
+                                        Não é daqui ❌
+                                    </button>
+                                    <button onclick="aceitarDaBuscaGeral('${eleitor.id}', 'fim')" class="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-2 rounded transition-colors text-sm">
+                                        Achei (Fim da fila) 🚶
+                                    </button>
+                                    <button onclick="aceitarDaBuscaGeral('${eleitor.id}', 'aba2')" class="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-2 rounded transition-colors text-sm">
+                                        Achei (Puxar p/ Aba 2) ✔
+                                    </button>
+                                </div>
+                            </div>`;
+                    }
+                }
+                
+                // 2. Feedbacks (Volta apenas para a seção que enviou a pessoa)
+                if (eleitor.secao_origem === filaAtual && (eleitor.status === 'encontrado' || eleitor.status === 'rejeitado_por_todos')) {
+                    
+                    let isEncontrado = eleitor.status === 'encontrado';
+                    let corBorda = isEncontrado ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50';
+                    
+                    let textoStatus = "";
+                    if (isEncontrado) {
+                        if (eleitor.acao_destino === 'aba2') {
+                            textoStatus = `<span class="text-green-700">✅ Achado na Seção ${eleitor.secao_destino}.<br>O eleitor pode <b>IR DIRETO</b> (Sem fila) lá.</span>`;
+                        } else {
+                            textoStatus = `<span class="text-yellow-700">✅ Achado na Seção ${eleitor.secao_destino}.<br>Mande o eleitor para o <b>FIM DA FILA</b> de lá.</span>`;
+                        }
+                    } else {
+                        textoStatus = `<span class="text-red-700">❌ Não pertence a nenhuma destas seções.</span>`;
+                    }
+
+                    let htmlFeedback = `
+                        <div class="flex flex-col md:flex-row justify-between items-center p-4 border-l-4 ${corBorda} rounded shadow-sm gap-4 border-2 border-dashed border-purple-400 mb-4">
                             <div class="text-center md:text-left w-full">
+                                <p class="text-sm font-bold text-purple-600 uppercase mb-1">⚠️ Resposta para você:</p>
                                 <p class="text-xl font-bold text-gray-800">${eleitor.nome}</p>
                                 <p class="text-2xl md:text-3xl text-gray-900 font-mono tracking-widest font-black mt-2">${formatarTitulo(eleitor.titulo)}</p>
-                                
-                                <!-- NOVOS ALERTAS VISUAIS DA ABA 4 -->
-                                ${eleitor.origem_rejeicao ? `<p class="text-sm font-bold text-red-600 mt-2">Rejeitado pela Seção ${eleitor.origem_rejeicao}</p>` : ''}
-                                ${eleitor.nao_sabe_secao ? `<p class="text-sm font-bold text-blue-600 mt-2">❓ Não sabe a seção original</p>` : ''}
-                                
+                                <p class="text-base font-medium mt-3 bg-white p-2 rounded border shadow-inner">${textoStatus}</p>
                             </div>
                             <div class="flex flex-col sm:flex-row w-full md:w-auto gap-2">
-                                <button onclick="negarDaBuscaGeral('${eleitor.id}')" class="w-full bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-3 px-4 rounded transition-colors whitespace-nowrap">
-                                    Também não é daqui ❌
-                                </button>
-                                <button onclick="aceitarDaBuscaGeral('${eleitor.id}')" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded transition-colors whitespace-nowrap">
-                                    Achei, puxar pra cá ✔
+                                <button onclick="apagarFeedback('${eleitor.id}')" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-4 px-6 rounded transition-colors whitespace-nowrap">
+                                    Ciente (Apagar Aviso)
                                 </button>
                             </div>
                         </div>`;
+
+                    // Roteamento Inteligente do Feedback
+                    if (eleitor.nao_sabe_secao) {
+                        // Se foi o Mesa A que enviou, o retorno vai pra Aba 5
+                        feedbacksAba5++;
+                        listaRetornosAba5.innerHTML += htmlFeedback;
+                    } else {
+                        // Se foi o Mesa B que rejeitou, o retorno vai pra Aba 4
+                        feedbacksAba4++;
+                        listaFeedbacksAba4.innerHTML += htmlFeedback;
+                    }
                 }
             });
+
+            // Títulos das seções de feedback (Só aparecem se houver mensagens)
+            if (feedbacksAba4 > 0) {
+                listaFeedbacksAba4.insertAdjacentHTML('afterbegin', '<h3 class="font-bold text-purple-700 mb-2 uppercase text-sm bg-purple-100 p-2 rounded">Feedbacks das suas rejeições:</h3>');
+            }
 
             // Exibição de listas vazias
             if (qtdCaderno === 0) listaCaderno.innerHTML = '<p class="text-gray-500 text-center py-8">Ninguém aguardando na Seção ' + filaAtual + '.</p>';
             if (qtdUrna === 0) listaUrna.innerHTML = '<p class="text-gray-500 text-center py-8">Ninguém aguardando na Seção ' + filaAtual + '.</p>';
             if (rejeitadosVisiveis === 0) listaRejeitados.innerHTML = '<p class="text-gray-500 text-center py-8">Ninguém perdido no momento.</p>';
+            if (feedbacksAba5 === 0) listaRetornosAba5.innerHTML = '<p class="text-gray-500 text-center py-8">Nenhum retorno para a fila no momento.</p>';
 
-            // Controle dos Alertas Visuais (Badges nas abas)
+            // Controle dos Alertas Visuais (Badges)
             const badge2 = document.getElementById('badgeAba2');
-            if (qtdCaderno > 0) {
-                badge2.classList.remove('hidden');
-                badge2.innerText = qtdCaderno;
-            } else {
-                badge2.classList.add('hidden');
-            }
+            if (qtdCaderno > 0) { badge2.classList.remove('hidden'); badge2.innerText = qtdCaderno; } else { badge2.classList.add('hidden'); }
 
             const badge3 = document.getElementById('badgeAba3');
-            if (qtdUrna > 0) {
-                badge3.classList.remove('hidden');
-                badge3.innerText = qtdUrna;
-            } else {
-                badge3.classList.add('hidden');
-            }
+            if (qtdUrna > 0) { badge3.classList.remove('hidden'); badge3.innerText = qtdUrna; } else { badge3.classList.add('hidden'); }
 
+            // Aba 4 recebe o alerta tanto de perdidos novos quanto de respostas de rejeição do Mesa B
             const badge4 = document.getElementById('badgeAba4');
-            if (rejeitadosVisiveis > 0) {
-                badge4.classList.remove('hidden');
-                badge4.innerText = rejeitadosVisiveis;
-            } else {
-                badge4.classList.add('hidden');
-            }
+            const totalAba4 = rejeitadosVisiveis + feedbacksAba4;
+            if (totalAba4 > 0) { badge4.classList.remove('hidden'); badge4.innerText = totalAba4; } else { badge4.classList.add('hidden'); }
+
+            const badge5 = document.getElementById('badgeAba5');
+            if (feedbacksAba5 > 0) { badge5.classList.remove('hidden'); badge5.innerText = feedbacksAba5; } else { badge5.classList.add('hidden'); }
         }
     </script>
 </body>
